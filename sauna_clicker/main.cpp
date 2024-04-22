@@ -7,16 +7,28 @@
 
 using namespace std;
 
+//////////////////////////////////////////////////
+//               Mängu propertied               //
+//////////////////////////////////////////////////
 const int AKNA_LAIUS = 1280;
 const int AKNA_KÕRGUS = 720;
+//testimise jaoks panin 0.02 hinnaks
 const float AUTOMAAT_CLICKER_HIND = 0.02f;
 const float AUTOMAAT_CLICKER_KLIKIAEG_SEK = 0.02f;
 
+
+//////////////////////////////////////////////////
+//               Globaalsed muutujad            //
+//////////////////////////////////////////////////
 SDL_Renderer* renderdaja = nullptr;
 float skoor = 0.0f;
 bool automaatClickerOlemas = false;
 bool automaatneKlikkLubatud = false;
 
+
+//////////////////////////////////////////////////
+//               Kliki struktuur                //
+//////////////////////////////////////////////////
 struct Clicker {
     SDL_Rect rect;
     bool enabled;
@@ -24,6 +36,10 @@ struct Clicker {
 
 Clicker automaatClicker;
 
+
+//////////////////////////////////////////////////
+//         Funktsioon ringi joonistamiseks      //
+//////////////////////////////////////////////////
 void ring(SDL_Renderer* renderdaja, int x, int y, int raadius) {
     for (int dy = -raadius; dy <= raadius; dy++) {
         for (int dx = -raadius; dx <= raadius; dx++) {
@@ -34,6 +50,10 @@ void ring(SDL_Renderer* renderdaja, int x, int y, int raadius) {
     }
 }
 
+
+//////////////////////////////////////////////////
+//         Funktsioon ostmise jaoks             //
+//////////////////////////////////////////////////
 void ostaAutomaatClicker() {
     if (skoor >= AUTOMAAT_CLICKER_HIND) {
         skoor -= AUTOMAAT_CLICKER_HIND;
@@ -44,12 +64,13 @@ void ostaAutomaatClicker() {
         cout << "Sul ei ole piisavalt kraade, et osta automaat clicker" << endl;
     }
 }
-
+// Funktsioon et checkida kas kursor on kasti peal
 bool kursorClickeril(Clicker clicker, int x, int y) {
     return (x >= clicker.rect.x && x <= clicker.rect.x + clicker.rect.w &&
             y >= clicker.rect.y && y <= clicker.rect.y + clicker.rect.h);
 }
 
+// Funktsioon automaatklikimisele (iga sekund annab 0.02 kraadi juurde)
 void automaatneKlikk() {
     while (automaatneKlikkLubatud) {
         skoor += 0.02f;
@@ -58,6 +79,10 @@ void automaatneKlikk() {
 }
 
 int main() {
+
+    //////////////////////////////////////////////////
+    //             SDL Installeerimine              //
+    //////////////////////////////////////////////////
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         cerr << "SDL_Viga: " << SDL_GetError() << endl;
         return 1;
@@ -83,10 +108,11 @@ int main() {
         return 1;
     }
 
-    automaatClicker.rect = {30, 50, 180, 50}; // Vasakule üles
+
+    automaatClicker.rect = {30, 50, 180, 50}; // Vasakule üles kast (automaatklikeri jaoks)
     automaatClicker.enabled = false;
 
-    SDL_Rect poodRect = {10, 10, 100, 40};
+    SDL_Rect poodRect = {10, 10, 100, 40}; // Vasakule üles kast (Poe jaoks kast)
 
     bool välju = false;
     thread automaatneKlikkThread;
@@ -121,6 +147,9 @@ int main() {
             }
         }
 
+        //////////////////////////////////////////////////
+        //       SDL-iga joonistame teksti ja kaste     //
+        //////////////////////////////////////////////////   
         SDL_SetRenderDrawColor(renderdaja, 0, 0, 0, 255);
         SDL_RenderClear(renderdaja);
 
@@ -236,6 +265,9 @@ int main() {
         SDL_RenderPresent(renderdaja);
     }
 
+    //////////////////////////////////////////////////
+    //                 Cleanup                      //
+    //////////////////////////////////////////////////
     if (automaatneKlikkThread.joinable()) {
         automaatneKlikkThread.join();
     }
