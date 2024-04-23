@@ -12,19 +12,17 @@ using namespace std;
 //////////////////////////////////////////////////
 const int AKNA_LAIUS = 1280;
 const int AKNA_KÕRGUS = 720;
-//testimise jaoks panin 0.02 hinnaks
-const float AUTOMAAT_CLICKER_HIND = 0.02f;
+const float AUTOMAAT_CLICKER_HIND = 0.99f;
 const float AUTOMAAT_CLICKER_KLIKIAEG_SEK = 0.02f;
-
 
 //////////////////////////////////////////////////
 //               Globaalsed muutujad            //
 //////////////////////////////////////////////////
 SDL_Renderer* renderdaja = nullptr;
-float skoor = 0.0f;
+float kraadid = 0.0f;
+int saunaraha = 0;
 bool automaatClickerOlemas = false;
 bool automaatneKlikkLubatud = false;
-
 
 //////////////////////////////////////////////////
 //               Kliki struktuur                //
@@ -35,7 +33,6 @@ struct Clicker {
 };
 
 Clicker automaatClicker;
-
 
 //////////////////////////////////////////////////
 //         Funktsioon ringi joonistamiseks      //
@@ -50,20 +47,20 @@ void ring(SDL_Renderer* renderdaja, int x, int y, int raadius) {
     }
 }
 
-
 //////////////////////////////////////////////////
 //         Funktsioon ostmise jaoks             //
 //////////////////////////////////////////////////
 void ostaAutomaatClicker() {
-    if (skoor >= AUTOMAAT_CLICKER_HIND) {
-        skoor -= AUTOMAAT_CLICKER_HIND;
+    if (saunaraha >= AUTOMAAT_CLICKER_HIND * 100) {
+        saunaraha -= AUTOMAAT_CLICKER_HIND * 100;
         automaatClickerOlemas = true;
         automaatneKlikkLubatud = true;
-        cout << "Ostsid automaat clickeri!" << endl;
+        cout << "Ostsid automaat clickeri" << endl;
     } else {
-        cout << "Sul ei ole piisavalt kraade, et osta automaat clicker" << endl;
+        cout << "Sul ei ole piisavalt saunaraha, et osta automaat clicker" << endl;
     }
 }
+
 // Funktsioon et checkida kas kursor on kasti peal
 bool kursorClickeril(Clicker clicker, int x, int y) {
     return (x >= clicker.rect.x && x <= clicker.rect.x + clicker.rect.w &&
@@ -73,10 +70,12 @@ bool kursorClickeril(Clicker clicker, int x, int y) {
 // Funktsioon automaatklikimisele (iga sekund annab 0.02 kraadi juurde)
 void automaatneKlikk() {
     while (automaatneKlikkLubatud) {
-        skoor += 0.02f;
+        kraadid += 0.01f; // Lisatud kraadi
+        saunaraha += 1; // Lisatud saunaraha
         this_thread::sleep_for(chrono::seconds(1));
     }
 }
+
 
 int main() {
 
@@ -128,10 +127,11 @@ int main() {
                 int ringiY = AKNA_KÕRGUS / 2;
                 int raadius = 50;
                 if ((hiirX - ringiX) * (hiirX - ringiX) + (hiirY - ringiY) * (hiirY - ringiY) <= raadius * raadius) {
-                    skoor += 0.01f;
-                    cout << "Kraadid: " << fixed << setprecision(2) << skoor << endl;
+                    kraadid += 0.01f;
+                    saunaraha += 1;
+                    cout << "Kraadid: " << fixed << setprecision(2) << kraadid << endl;
 
-                    if (skoor >= AUTOMAAT_CLICKER_HIND && !automaatClickerOlemas) {
+                    if (kraadid >= AUTOMAAT_CLICKER_HIND && !automaatClickerOlemas) {
                         automaatClicker.enabled = true;
                     }
                 } else if (kursorClickeril(automaatClicker, hiirX, hiirY) && automaatClicker.enabled) {
@@ -237,7 +237,7 @@ int main() {
         }
         SDL_Color tekstiVärv3 = {255, 255, 255, 255};
         stringstream skooriTekst;
-        skooriTekst << "Kraadid: " << fixed << setprecision(2) << skoor;
+        skooriTekst << "Kraadid: " << fixed << setprecision(2) << kraadid;
         string skoorStr = skooriTekst.str();
         SDL_Surface* tekstiPind3 = TTF_RenderText_Solid(font3, skoorStr.c_str(), tekstiVärv3);
         if (!tekstiPind3) {
@@ -261,6 +261,41 @@ int main() {
         SDL_FreeSurface(tekstiPind3);
         SDL_DestroyTexture(tekstiTexture3);
         TTF_CloseFont(font3);
+
+        // Kuva saunaraha
+        TTF_Font* font4 = TTF_OpenFont("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 24);
+        if (!font4) {
+            cerr << "Fonti ei toimi: " << TTF_GetError() << endl;
+            TTF_Quit();
+            SDL_Quit();
+            return 1;
+        }
+        SDL_Color tekstiVärv4 = {255, 255, 255, 255};
+        stringstream saunarahaTekst;
+        saunarahaTekst << "Saunaraha: " << saunaraha;
+        string saunarahaStr = saunarahaTekst.str();
+        SDL_Surface* tekstiPind4 = TTF_RenderText_Solid(font4, saunarahaStr.c_str(), tekstiVärv4);
+        if (!tekstiPind4) {
+            cerr << "Teksti ei toimi: " << TTF_GetError() << endl;
+            TTF_CloseFont(font4);
+            TTF_Quit();
+            SDL_Quit();
+            return 1;
+        }
+        SDL_Texture* tekstiTexture4 = SDL_CreateTextureFromSurface(renderdaja, tekstiPind4);
+        if (!tekstiTexture4) {
+            cerr << "Teksti texture ei toimi: " << SDL_GetError() << endl;
+            SDL_FreeSurface(tekstiPind4);
+            TTF_CloseFont(font4);
+            TTF_Quit();
+            SDL_Quit();
+            return 1;
+        }
+        SDL_Rect tekstiKast4 = {AKNA_LAIUS / 2 - 50, AKNA_KÕRGUS / 2 + 150, tekstiPind4->w, tekstiPind4->h};
+        SDL_RenderCopy(renderdaja, tekstiTexture4, NULL, &tekstiKast4);
+        SDL_FreeSurface(tekstiPind4);
+        SDL_DestroyTexture(tekstiTexture4);
+        TTF_CloseFont(font4);
 
         SDL_RenderPresent(renderdaja);
     }
