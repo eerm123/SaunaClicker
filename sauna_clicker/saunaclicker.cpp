@@ -1,16 +1,28 @@
 #include "sauna.h"
 
 // Globaalsete muutujate deklaratsioon
-SDL_Renderer* renderdaja = nullptr;
+SDL_Renderer *renderdaja = nullptr;
 float kraadid = 0.0f;
 int saunaraha = 0;
+
+int automaatclickerihind = 20;
 bool automaatClickerOlemas = false;
 bool automaatneKlikkLubatud = false;
+int automaatClickerCount = 0;
+
+int automaatclickerihind2 = 100;
+bool automaatClickerOlemas2 = false;
+bool automaatneKlikkLubatud2 = false;
+int automaatClickerCount2 = 0;
+bool kraadideLisamine = false;
+
+Clicker olukast;
+
 
 //////////////////////////////////////////////////
 //         Funktsioon ringi joonistamiseks      //
 //////////////////////////////////////////////////
-void ring(SDL_Renderer* renderdaja, int x, int y, int raadius) {
+void ring(SDL_Renderer *renderdaja, int x, int y, int raadius) {
     for (int dy = -raadius; dy <= raadius; dy++) {
         for (int dx = -raadius; dx <= raadius; dx++) {
             if (dx * dx + dy * dy <= raadius * raadius) {
@@ -21,14 +33,33 @@ void ring(SDL_Renderer* renderdaja, int x, int y, int raadius) {
 }
 
 //////////////////////////////////////////////////
-//         Funktsioon ostmise jaoks             //
+//         Funktsioonid ostmise jaoks           //
 //////////////////////////////////////////////////
 void ostaAutomaatClicker() {
-    if (saunaraha >= AUTOMAAT_CLICKER_HIND * 100) {
-        saunaraha -= AUTOMAAT_CLICKER_HIND * 100;
+    if (saunaraha >= automaatclickerihind) {
+        saunaraha -= automaatclickerihind;
         automaatClickerOlemas = true;
         automaatneKlikkLubatud = true;
+        automaatclickerihind *= 2;
+        automaatClickerCount++;
+
         cout << "Ostsid automaat clickeri" << endl;
+
+    } else {
+        cout << "Sul ei ole piisavalt saunaraha, et osta automaat clicker" << endl;
+    }
+}
+
+void ostaAutomaatClicker2() {
+    if (saunaraha >= automaatclickerihind2) {
+        saunaraha -= automaatclickerihind2;
+        automaatClickerOlemas2 = true;
+        automaatneKlikkLubatud2 = true;
+        automaatclickerihind2 *= 3;
+        automaatClickerCount2++;
+
+        cout << "Ostsid automaat clickeri" << endl;
+
     } else {
         cout << "Sul ei ole piisavalt saunaraha, et osta automaat clicker" << endl;
     }
@@ -43,15 +74,23 @@ bool kursorClickeril(Clicker clicker, int x, int y) {
 // Funktsioon automaatklikimisele (iga sekund annab 0.02 kraadi juurde)
 void automaatneKlikk() {
     while (automaatneKlikkLubatud) {
-        kraadid += 0.01f; // Lisatud kraadi
-        saunaraha += 1; // Lisatud saunaraha
-        this_thread::sleep_for(chrono::seconds(1));
+        this_thread::sleep_for(chrono::seconds (3));
+        kraadid += 0.02f * automaatClickerCount; // Lisatud kraadi
+        saunaraha += 2 * automaatClickerCount; // Lisatud saunaraha
+    }
+}
+
+void automaatneKlikk2() {
+    while (automaatneKlikkLubatud2) {
+        this_thread::sleep_for(chrono::seconds(2));
+        kraadid += 0.05f * automaatClickerCount2; // Lisatud kraadi
+        saunaraha += 5 * automaatClickerCount2; // Lisatud saunaraha
     }
 }
 
 // Funktsioon teksti renderdamiseks
-void renderText(TTF_Font* font, const string& text, const SDL_Color& color, int x, int y) {
-    SDL_Surface* surface = TTF_RenderText_Solid(font, text.c_str(), color);
+void renderText(TTF_Font *font, const string &text, const SDL_Color &color, int x, int y) {
+    SDL_Surface *surface = TTF_RenderText_Solid(font, text.c_str(), color);
     if (!surface) {
         cerr << "Teksti ei toimi: " << TTF_GetError() << endl;
         TTF_CloseFont(font);
@@ -59,7 +98,7 @@ void renderText(TTF_Font* font, const string& text, const SDL_Color& color, int 
         SDL_Quit();
         exit(1);
     }
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderdaja, surface);
+    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderdaja, surface);
     if (!texture) {
         cerr << "Teksti texture ei toimi: " << SDL_GetError() << endl;
         SDL_FreeSurface(surface);
@@ -72,4 +111,26 @@ void renderText(TTF_Font* font, const string& text, const SDL_Color& color, int 
     SDL_RenderCopy(renderdaja, texture, NULL, &destRect);
     SDL_FreeSurface(surface);
     SDL_DestroyTexture(texture);
+}
+
+void oluHullus() {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> dis_x(0, AKNA_LAIUS - olukast.rect.w);
+    uniform_int_distribution<int> dis_y(0, AKNA_KÕRGUS - olukast.rect.h);
+
+    while (true) {
+        this_thread::sleep_for(chrono::seconds(rand() % 21 + 50));
+        olukast.rect.x = dis_x(gen);
+        olukast.rect.y = dis_y(gen);
+        olukast.enabled = true;
+        this_thread::sleep_for(chrono::seconds(5));
+        olukast.enabled = false;
+        this_thread::sleep_for(chrono::minutes(1));
+    }
+}
+
+void ajutineKraadid() {
+    this_thread::sleep_for(chrono::seconds(10));
+    kraadideLisamine = false;
 }
