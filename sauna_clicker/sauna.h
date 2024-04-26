@@ -26,6 +26,9 @@ extern int saunaraha;
 extern bool automaatClickerOlemas;
 extern bool automaatneKlikkLubatud;
 extern int automaatclickerihind;
+extern bool automaatClickerOlemas2;
+extern bool automaatneKlikkLubatud2;
+extern int automaatclickerihind2;
 
 //////////////////////////////////////////////////
 //               Kliki struktuur                //
@@ -37,8 +40,10 @@ struct Clicker {
 
 void ring(SDL_Renderer* renderdaja, int x, int y, int raadius);
 void ostaAutomaatClicker();
+void ostaAutomaatClicker2();
 bool kursorClickeril(Clicker clicker, int x, int y);
 void automaatneKlikk();
+void automaatneKlikk2();
 void renderText(TTF_Font* font, const string& text, const SDL_Color& color, int x, int y);
 
 #endif
