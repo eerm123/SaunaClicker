@@ -3,8 +3,8 @@
 
 #include <iostream>
 #include <iomanip>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include <SDL.h>
+#include <SDL_ttf.h>
 #include <chrono>
 #include <thread>
 
@@ -15,7 +15,6 @@ using namespace std;
 //////////////////////////////////////////////////
 const int AKNA_LAIUS = 1280;
 const int AKNA_KÕRGUS = 720;
-const float AUTOMAAT_CLICKER_HIND = 0.99f;
 const float AUTOMAAT_CLICKER_KLIKIAEG_SEK = 0.02f;
 
 //////////////////////////////////////////////////
@@ -26,7 +25,7 @@ extern float kraadid;
 extern int saunaraha;
 extern bool automaatClickerOlemas;
 extern bool automaatneKlikkLubatud;
-
+extern int automaatclickerihind;
 
 //////////////////////////////////////////////////
 //               Kliki struktuur                //

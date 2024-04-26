@@ -4,8 +4,10 @@
 SDL_Renderer* renderdaja = nullptr;
 float kraadid = 0.0f;
 int saunaraha = 0;
+int automaatclickerihind = 10;
 bool automaatClickerOlemas = false;
 bool automaatneKlikkLubatud = false;
+int automaatClickerCount = 0;
 
 //////////////////////////////////////////////////
 //         Funktsioon ringi joonistamiseks      //
@@ -24,11 +26,15 @@ void ring(SDL_Renderer* renderdaja, int x, int y, int raadius) {
 //         Funktsioon ostmise jaoks             //
 //////////////////////////////////////////////////
 void ostaAutomaatClicker() {
-    if (saunaraha >= AUTOMAAT_CLICKER_HIND * 100) {
-        saunaraha -= AUTOMAAT_CLICKER_HIND * 100;
+    if (saunaraha >= automaatclickerihind) {
+        saunaraha -= automaatclickerihind;
         automaatClickerOlemas = true;
         automaatneKlikkLubatud = true;
+        automaatclickerihind *= 2;
+        automaatClickerCount++;
+
         cout << "Ostsid automaat clickeri" << endl;
+
     } else {
         cout << "Sul ei ole piisavalt saunaraha, et osta automaat clicker" << endl;
     }
@@ -43,8 +49,8 @@ bool kursorClickeril(Clicker clicker, int x, int y) {
 // Funktsioon automaatklikimisele (iga sekund annab 0.02 kraadi juurde)
 void automaatneKlikk() {
     while (automaatneKlikkLubatud) {
-        kraadid += 0.01f; // Lisatud kraadi
-        saunaraha += 1; // Lisatud saunaraha
+        kraadid += 0.02f * automaatClickerCount; // Lisatud kraadi
+        saunaraha += 2 * automaatClickerCount; // Lisatud saunaraha
         this_thread::sleep_for(chrono::seconds(1));
     }
 }
