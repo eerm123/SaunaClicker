@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/eero/Documents/SaunaClicker/build",
+  "command": "/usr/bin/g++  -I/usr/include/SDL2 -I/home/eero/Documents/SaunaClicker/SDL2TTF/include -I/home/eero/Documents/SaunaClicker/SDL2_image/include -g -std=gnu++20 -o CMakeFiles/SaunaClicker.dir/sauna_clicker/main.cpp.o -c /home/eero/Documents/SaunaClicker/sauna_clicker/main.cpp",
+  "file": "/home/eero/Documents/SaunaClicker/sauna_clicker/main.cpp"
+},
+{
+  "directory": "/home/eero/Documents/SaunaClicker/build",
+  "command": "/usr/bin/g++  -I/usr/include/SDL2 -I/home/eero/Documents/SaunaClicker/SDL2TTF/include -I/home/eero/Documents/SaunaClicker/SDL2_image/include -g -std=gnu++20 -o CMakeFiles/SaunaClicker.dir/sauna_clicker/saunaclicker.cpp.o -c /home/eero/Documents/SaunaClicker/sauna_clicker/saunaclicker.cpp",
+  "file": "/home/eero/Documents/SaunaClicker/sauna_clicker/saunaclicker.cpp"
+}
+]
