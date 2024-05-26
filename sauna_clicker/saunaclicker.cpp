@@ -1,23 +1,47 @@
 #include "sauna.h"
 
+
 // Globaalsete muutujate deklaratsioon
 SDL_Renderer *renderdaja = nullptr;
 float kraadid = 0.0f;
+float klikimisväärtus = 0.01f;
 int saunaraha = 0;
 
-int automaatclickerihind = 20;
+int automaatclickerihind = 25;
 bool automaatClickerOlemas = false;
 bool automaatneKlikkLubatud = false;
 int automaatClickerCount = 0;
 
-int automaatclickerihind2 = 100;
+int automaatclickerihind2 = 125;
 bool automaatClickerOlemas2 = false;
 bool automaatneKlikkLubatud2 = false;
 int automaatClickerCount2 = 0;
+
+int automaatclickerihind3 = 600;
+bool automaatClickerOlemas3 = false;
+bool automaatneKlikkLubatud3 = false;
+int automaatClickerCount3 = 0;
+
+int automaatclickerihind4 = 1400;
+bool automaatClickerOlemas4 = false;
+bool automaatneKlikkLubatud4 = false;
+int automaatClickerCount4 = 0;
 bool kraadideLisamine = false;
 
-Clicker olukast;
+int saunarahaX = AKNA_LAIUS - sigaWidth + 20;
+int saunarahaY = AKNA_KÕRGUS - sigaHeight + 55;
 
+int sigaWidth = 320;
+int sigaHeight = 200;
+int sigaX = AKNA_LAIUS - sigaWidth - 45;
+int sigaY = AKNA_KÕRGUS - sigaHeight - 30;
+
+int kraadWidth = 200;
+int kraadHeight = 80;
+int kraadX = AKNA_LAIUS - kraadWidth - 700;
+int kraadY = AKNA_KÕRGUS - kraadHeight - 30;
+
+Clicker olukast;
 
 //////////////////////////////////////////////////
 //         Funktsioon ringi joonistamiseks      //
@@ -35,7 +59,7 @@ void ring(SDL_Renderer *renderdaja, int x, int y, int raadius) {
 //////////////////////////////////////////////////
 //         Funktsioonid ostmise jaoks           //
 //////////////////////////////////////////////////
-void ostaAutomaatClicker() {
+void ostaAutomaatClicker() { //vee tilgutaja
     if (saunaraha >= automaatclickerihind) {
         saunaraha -= automaatclickerihind;
         automaatClickerOlemas = true;
@@ -43,25 +67,55 @@ void ostaAutomaatClicker() {
         automaatclickerihind *= 2;
         automaatClickerCount++;
 
-        cout << "Ostsid automaat clickeri" << endl;
+        cout << "Ostsid automaat clicker1(ehk vee tilgutaja)" << endl;
 
     } else {
-        cout << "Sul ei ole piisavalt saunaraha, et osta automaat clicker" << endl;
+        cout << "Sul ei ole piisavalt saunaraha, et osta automaat clicker1" << endl;
     }
 }
 
-void ostaAutomaatClicker2() {
+void ostaAutomaatClicker2() { // Kuumkivi
     if (saunaraha >= automaatclickerihind2) {
         saunaraha -= automaatclickerihind2;
         automaatClickerOlemas2 = true;
         automaatneKlikkLubatud2 = true;
-        automaatclickerihind2 *= 3;
+        automaatclickerihind2 *= 2;
         automaatClickerCount2++;
 
-        cout << "Ostsid automaat clickeri" << endl;
+        cout << "Ostsid automaat clicker2 (ehk kuumkivi))" << endl;
 
     } else {
-        cout << "Sul ei ole piisavalt saunaraha, et osta automaat clicker" << endl;
+        cout << "Sul ei ole piisavalt saunaraha, et osta automaat clicker2" << endl;
+    }
+}
+
+void ostaAutomaatClicker3() { // Süütetabletid
+    if (saunaraha >= automaatclickerihind3) {
+        saunaraha -= automaatclickerihind3;
+        automaatClickerOlemas3 = true;
+        automaatneKlikkLubatud3 = true;
+        automaatclickerihind3 *= 3;
+        automaatClickerCount3++;
+
+        cout << "Ostsid automaat clicker3 (ehk Süütetabletid))" << endl;
+
+    } else {
+        cout << "Sul ei ole piisavalt saunaraha, et osta automaat clicker3" << endl;
+    }
+}
+
+void ostaAutomaatClicker4() { // Pelletimasin
+    if (saunaraha >= automaatclickerihind4) {
+        saunaraha -= automaatclickerihind4;
+        automaatClickerOlemas4 = true;
+        automaatneKlikkLubatud4 = true;
+        automaatclickerihind4 *= 4;
+        automaatClickerCount4++;
+
+        cout << "Ostsid automaat clicker3 (ehk pelletimasin))" << endl;
+
+    } else {
+        cout << "Sul ei ole piisavalt saunaraha, et osta automaat clicker4" << endl;
     }
 }
 
@@ -74,7 +128,7 @@ bool kursorClickeril(Clicker clicker, int x, int y) {
 // Funktsioon automaatklikimisele (iga sekund annab 0.02 kraadi juurde)
 void automaatneKlikk() {
     while (automaatneKlikkLubatud) {
-        this_thread::sleep_for(chrono::seconds (3));
+        this_thread::sleep_for(chrono::milliseconds (1750));
         kraadid += 0.02f * automaatClickerCount; // Lisatud kraadi
         saunaraha += 2 * automaatClickerCount; // Lisatud saunaraha
     }
@@ -82,9 +136,25 @@ void automaatneKlikk() {
 
 void automaatneKlikk2() {
     while (automaatneKlikkLubatud2) {
-        this_thread::sleep_for(chrono::seconds(2));
-        kraadid += 0.05f * automaatClickerCount2; // Lisatud kraadi
-        saunaraha += 5 * automaatClickerCount2; // Lisatud saunaraha
+        this_thread::sleep_for(chrono::milliseconds (1500));
+        kraadid += 0.08f * automaatClickerCount2; // Lisatud kraadi
+        saunaraha += 8 * automaatClickerCount2; // Lisatud saunaraha
+    }
+}
+
+void automaatneKlikk3() {
+    while (automaatneKlikkLubatud3) {
+        this_thread::sleep_for(chrono::milliseconds(1250));
+        kraadid += 0.2f * automaatClickerCount3; // Lisatud kraadi
+        saunaraha += 20 * automaatClickerCount3; // Lisatud saunaraha
+    }
+}
+
+void automaatneKlikk4() {
+    while (automaatneKlikkLubatud4) {
+        this_thread::sleep_for(chrono::milliseconds(1000));
+        kraadid += 1.0f * automaatClickerCount4; // Lisatud kraadi
+        saunaraha += 100 * automaatClickerCount4; // Lisatud saunaraha
     }
 }
 
