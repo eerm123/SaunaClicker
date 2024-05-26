@@ -1,0 +1,3 @@
+C:/Users/Kaspar/CLionProjects/SaunaClicker/cmake-build-debug/CMakeFiles/SaunaClicker.dir
+C:/Users/Kaspar/CLionProjects/SaunaClicker/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/Kaspar/CLionProjects/SaunaClicker/cmake-build-debug/CMakeFiles/rebuild_cache.dir
