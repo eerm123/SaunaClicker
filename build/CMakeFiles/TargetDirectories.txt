@@ -1,0 +1,3 @@
+/home/eero/Documents/SaunaClicker/build/CMakeFiles/SaunaClicker.dir
+/home/eero/Documents/SaunaClicker/build/CMakeFiles/edit_cache.dir
+/home/eero/Documents/SaunaClicker/build/CMakeFiles/rebuild_cache.dir
